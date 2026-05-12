@@ -1,0 +1,5 @@
+--target=avr
+-mmcu=atmega328p
+-DF_CPU=16000000UL
+-I/usr/avr/include
+-Os
