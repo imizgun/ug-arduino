@@ -1,7 +1,7 @@
 MCU = atmega328p
 F_CPU = 16000000UL
 PORT = /dev/ttyUSB0
-TARGET = blink
+TARGET = blink_mixed
 
 all:
 	avr-gcc -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os -o $(TARGET).elf $(TARGET).c

@@ -4,12 +4,9 @@
 void pwm_init(void) {
     DDRB |= (1 << PB1);
 
-    TCCR1A = (1 << COM1A1)
-           | (1 << WGM10);
+    TCCR1A = (1 << COM1A1) | (1 << WGM10);
 
-    TCCR1B = (1 << WGM12)
-           | (1 << CS11)
-           | (1 << CS10);
+    TCCR1B = (1 << WGM12) | (1 << CS11) | (1 << CS10);
 }
 
 void pwm_set(uint8_t brightness) {
