@@ -3,10 +3,19 @@
 #include <util/delay.h>
 
 volatile uint8_t mode = 0;
-const uint16_t fade_delay = 3;
+const uint16_t fadeDelayTime = 3;
+const uint16_t blinkDelayTime = 800;
 
 ISR(INT0_vect) {
-    mode ^= 1;
+    mode = (mode + 1) % 4;
+}
+
+void turn_on_d9(void) {
+    PORTB |= (1 << PB1);
+}
+
+void turn_off_d9(void) {
+    PORTB &= ~(1 << PB1);
 }
 
 void pwm_init(void) {
@@ -17,29 +26,30 @@ void pwm_init(void) {
 void pwm_stop(void) {
     TCCR1A = 0;
     TCCR1B = 0;
-    PORTB &= ~(1 << PB1);
+    turn_off_d9();
 }
 
 void blink(void) {
     pwm_stop();
-    PORTB |= (1 << PB1);
-    _delay_ms(1000);
-    PORTB &= ~(1 << PB1);
-    _delay_ms(1000);
+    turn_on_d9();
+    _delay_ms(blinkDelayTime);
+    turn_off_d9();
+    _delay_ms(blinkDelayTime);
 }
 
 void fade(void) {
     pwm_init();
     for (uint16_t i = 0; i <= 255; i++) {
-        if (mode == 0) break;
+        if (mode != 3) break;
         OCR1A = i;
-        _delay_ms(fade_delay);
+        _delay_ms(fadeDelayTime);
     }
     for (uint16_t i = 255; i > 0; i--) {
-        if (mode == 0) break;
+        if (mode != 3) break;
         OCR1A = i;
-        _delay_ms(fade_delay);
+        _delay_ms(fadeDelayTime);
     }
+    if (mode != 3) pwm_stop();
 }
 
 int main(void) {
@@ -52,8 +62,12 @@ int main(void) {
 
     while (1) {
         if (mode == 0) {
+            turn_off_d9();
+        } else if (mode == 1) {
+            turn_on_d9();
+        } else if (mode == 2) {
             blink();
-        } else {
+        } else if (mode == 3) {
             fade();
         }
     }
