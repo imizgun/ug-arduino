@@ -21,7 +21,7 @@ int main(void) {
             pwm_set(i);
             _delay_ms(8);
         }
-        
+
         for (uint16_t i = 255; i > 0; i--) {
             pwm_set(i);
             _delay_ms(8);
