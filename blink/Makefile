@@ -3,7 +3,9 @@ F_CPU = 16000000UL
 PORT = /dev/ttyUSB0
 TARGET = blink_buildin
 
-all:
+.PHONY: all compile flash clean
+
+compile:
 	avr-gcc -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os -o $(TARGET).elf $(TARGET).c
 	avr-objcopy -O ihex $(TARGET).elf $(TARGET).hex
 
@@ -12,3 +14,5 @@ flash:
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex
+
+all: compile flash clean
