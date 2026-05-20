@@ -3,3 +3,6 @@
 -DF_CPU=16000000UL
 -I/usr/avr/include
 -Os
+-fno-exceptions
+-fno-rtti
+-std=c++17

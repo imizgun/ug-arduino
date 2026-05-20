@@ -1,12 +1,12 @@
 MCU = atmega328p
 F_CPU = 16000000UL
 PORT = /dev/ttyUSB0
-TARGET = blink_buildin
+TARGET = ./morse/morse
 
 .PHONY: all compile flash clean
 
 compile:
-	avr-gcc -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os -o $(TARGET).elf $(TARGET).c
+	avr-g++ -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os -fno-exceptions -fno-rtti -std=c++17 -o $(TARGET).elf $(TARGET).cpp
 	avr-objcopy -O ihex $(TARGET).elf $(TARGET).hex
 
 flash:
