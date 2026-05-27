@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <stdint.h>
 #include <util/delay.h>
 #include <string.h>
 
@@ -7,33 +6,6 @@ const uint16_t DOT_TIME = 100;
 const uint16_t DASH_TIME = 500;
 const uint16_t LETTER_DELIMETER_TIME = 200;
 const uint16_t WORD_DELIMETER_TIME = 1000;
-
-#define BAUD 9600
-
-class UART {
-public:
-    void begin(uint32_t baud) {
-        uint16_t ubrr = F_CPU / 16 / baud - 1;
-        UBRR0H = ubrr >> 8;
-        UBRR0L = ubrr;
-        UCSR0B = (1 << TXEN0) | (1 << RXEN0);
-        UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
-    }
-
-    void print(const char* s) {
-        while (*s) write(*s++);
-    }
-
-    void write(char c) {
-        while (!(UCSR0A & (1 << UDRE0)));
-        UDR0 = c;
-    }
-
-    char read() {
-        while (!(UCSR0A & (1 << RXC0)));
-        return UDR0;
-    }
-};
 
 static const char* morse_table[] = {
     ".-",   /* A */
@@ -64,6 +36,31 @@ static const char* morse_table[] = {
     "--..", /* Z */
 };
 
+class UART {
+public:
+    void begin(uint32_t baud) {
+        uint16_t ubrr = F_CPU / 16 / baud - 1;
+        UBRR0H = ubrr >> 8;
+        UBRR0L = ubrr;
+        UCSR0B = (1 << TXEN0) | (1 << RXEN0);
+        UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+    }
+
+    void print(const char* s) {
+        while (*s) write(*s++);
+    }
+
+    void write(char c) {
+        while (!(UCSR0A & (1 << UDRE0)));
+        UDR0 = c;
+    }
+
+    char read() {
+        while (!(UCSR0A & (1 << RXC0)));
+        return UDR0;
+    }
+};
+
 static void delay_ms(uint16_t ms) {
     while (ms--) _delay_ms(1);
 }
@@ -75,13 +72,8 @@ void blink(uint16_t timeToShine, uint16_t timeToWait) {
     delay_ms(timeToWait);
 }
 
-void dot() {
-    blink(DOT_TIME, LETTER_DELIMETER_TIME);
-}
-
-void dash() {
-    blink(DASH_TIME, LETTER_DELIMETER_TIME);
-}
+void dot() { blink(DOT_TIME, LETTER_DELIMETER_TIME); }
+void dash() { blink(DASH_TIME, LETTER_DELIMETER_TIME); }
 
 const char* getMorseWord(const char* word) {
     static char res[64];
@@ -106,13 +98,13 @@ void blinkMorseWord(const char* morse) {
     delay_ms(WORD_DELIMETER_TIME);
 }
 
-int main(void) {
+int main() {
     DDRB |= (1 << PB1);
     UART Serial;
     char buf[32];
     uint8_t idx = 0;
 
-    Serial.begin(BAUD);
+    Serial.begin(9600);
     Serial.print("hello\r\n");
 
     while (1) {

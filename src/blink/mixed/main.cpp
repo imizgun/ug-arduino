@@ -10,26 +10,26 @@ ISR(INT0_vect) {
     mode = (mode + 1) % 4;
 }
 
-void turn_on_d9(void) {
+void turn_on_d9() {
     PORTB |= (1 << PB1);
 }
 
-void turn_off_d9(void) {
+void turn_off_d9() {
     PORTB &= ~(1 << PB1);
 }
 
-void pwm_init(void) {
+void pwm_init() {
     TCCR1A = (1 << COM1A1) | (1 << WGM10);
-    TCCR1B = (1 << WGM12)  | (1 << CS11) | (1 << CS10);
+    TCCR1B = (1 << WGM12) | (1 << CS11) | (1 << CS10);
 }
 
-void pwm_stop(void) {
+void pwm_stop() {
     TCCR1A = 0;
     TCCR1B = 0;
     turn_off_d9();
 }
 
-void blink(void) {
+void blink_led() {
     pwm_stop();
     turn_on_d9();
     _delay_ms(blinkDelayTime);
@@ -37,7 +37,7 @@ void blink(void) {
     _delay_ms(blinkDelayTime);
 }
 
-void fade(void) {
+void fade() {
     pwm_init();
     for (uint16_t i = 0; i <= 255; i++) {
         if (mode != 3) break;
@@ -52,10 +52,9 @@ void fade(void) {
     if (mode != 3) pwm_stop();
 }
 
-int main(void) {
+int main() {
     DDRB |= (1 << PB1);
     DDRD &= ~(1 << PD2);
-
     EIMSK |= (1 << INT0);
     EICRA |= (1 << ISC01) | (1 << ISC00);
     sei();
@@ -66,7 +65,7 @@ int main(void) {
         } else if (mode == 1) {
             turn_on_d9();
         } else if (mode == 2) {
-            blink();
+            blink_led();
         } else if (mode == 3) {
             fade();
         }

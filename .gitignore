@@ -3,3 +3,6 @@
 .cluade/
 .idea/
 .vscode/
+.pio/
+compile_commands.json
+.cache/

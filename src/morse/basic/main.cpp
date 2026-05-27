@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <stdint.h>
 #include <util/delay.h>
 #include <string.h>
 
@@ -8,7 +7,7 @@ const uint16_t DASH_TIME = 500;
 const uint16_t LETTER_DELIMETER_TIME = 200;
 const uint16_t WORD_DELIMETER_TIME = 1000;
 
-static const char* morse[] = {
+static const char* morse_table[] = {
     ".-",   /* A */
     "-...", /* B */
     "-.-.", /* C */
@@ -48,32 +47,25 @@ void blink(uint16_t timeToShine, uint16_t timeToWait) {
     delay_ms(timeToWait);
 }
 
-void dot() {
-    blink(DOT_TIME, LETTER_DELIMETER_TIME);
-}
-
-void dash() {
-    blink(DASH_TIME, LETTER_DELIMETER_TIME);
-}
+void dot() { blink(DOT_TIME, LETTER_DELIMETER_TIME); }
+void dash() { blink(DASH_TIME, LETTER_DELIMETER_TIME); }
 
 void blinkMorseWord(const char* word) {
     for (int i = 0; i < strlen(word); i++) {
         char c = word[i];
-
-        const char* morseChar = morse[c - 'A'];
+        const char* morseChar = morse_table[c - 'A'];
         for (int j = 0; j < strlen(morseChar); j++) {
             if (morseChar[j] == '.') dot();
             if (morseChar[j] == '-') dash();
         }
     }
-    
     delay_ms(WORD_DELIMETER_TIME);
 }
 
-int main(void) {
+int main() {
     DDRB |= (1 << PB1);
 
-    while(1) {
+    while (1) {
         blinkMorseWord("SOS");
     }
 }
