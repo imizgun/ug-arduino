@@ -2,6 +2,7 @@
 #include "WString.h"
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include <string.h>
 
 #define IND "AVT 5636 Arduino UNO"
 String TEMP_MODE = "0"; // 0 - base, 1 - cel
@@ -48,39 +49,44 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available()) {
-        String line = Serial.readStringUntil('\n');
-        line.trim();
+    // if (Serial.available()) {
+    //     String line = Serial.readStringUntil('\n');
+    //     line.trim();
 
-        if (line == "*IND") {
-            Serial.println(IND);
-        }
+    //     if (line == "*IND") {
+    //         Serial.println(IND);
+    //     }
 
-        else if (line == "MEAS:TEMP?") {
-            uint16_t raw_temp = analogRead(A2);
-            Serial.println(TEMP_MODE == "0" ? raw_temp : adc_to_celsius(raw_temp));
-        }
+    //     else if (line == "MEAS:TEMP?") {
+    //         uint16_t raw_temp = analogRead(A2);
+    //         Serial.println(TEMP_MODE == "0" ? raw_temp : adc_to_celsius(raw_temp));
+    //     }
 
-        else if (line.startsWith("CONF:TEMP")) {
-            String sent_mode = line.substring(10); 
-            if (sent_mode == "0" || sent_mode == "1") {
-                TEMP_MODE = sent_mode;
-                Serial.println("TEMP_MODE changed to " + TEMP_MODE);
-            }
-            else {
-                Serial.println("Error in CONF command: " + line);
-            }
-        }
-        else if (line.startsWith("LCD:TEXT ")) {
-            String text = line.substring(9);
-            text.trim();
-            lcdClear();
-            lcdPosition(1, 1);
-            lcdPrint(text);
-            Serial.println("OK");
-        }
-        else {
-            Serial.println("Unknown command: " + line);
-        } 
-    }   
+    //     else if (line.startsWith("CONF:TEMP")) {
+    //         String sent_mode = line.substring(10); 
+    //         if (sent_mode == "0" || sent_mode == "1") {
+    //             TEMP_MODE = sent_mode;
+    //             Serial.println("TEMP_MODE changed to " + TEMP_MODE);
+    //         }
+    //         else {
+    //             Serial.println("Error in CONF command: " + line);
+    //         }
+    //     }
+    //     else if (line.startsWith("LCD:TEXT ")) {
+    //         String text = line.substring(9);
+    //         text.trim();
+    //         lcdClear();
+    //         lcdPosition(1, 1);
+    //         lcdPrint(text);
+    //         Serial.println("OK");
+    //     }
+    //     else {
+    //         Serial.println("Unknown command: " + line);
+    //     } 
+    // }
+
+    String str = String(millis() / 1000.0);
+    lcdPrint(str);
+    delay(500);
+    lcdClear();
 }
